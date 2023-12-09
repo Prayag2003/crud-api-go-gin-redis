@@ -1,23 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"net/http"
-	"github.com/gin-gonic/gin"
+
+	application "github.com/Prayag2003/go-microservice/Application"
 )
 
 func main() {
-	server := &http.Server{
-		Addr:    ":3000",
-		Handler: http.HandlerFunc(basicHandler),
-	}
-
-	err := server.ListenAndServe()
+	app := application.New()
+	err := app.Start(context.TODO())
 	if err != nil {
-		fmt.Println("Failed to listen to server", err)
+		fmt.Println("Failed to start app ")
 	}
-}
-
-func basicHandler(wr http.ResponseWriter, r *http.Request) {
-	wr.Write([]byte("Hello World "))
 }
