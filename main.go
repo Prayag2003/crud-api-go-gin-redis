@@ -3,14 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
 
 	application "github.com/Prayag2003/go-microservice/Application"
 )
 
 func main() {
 	app := application.New()
-	err := app.Start(context.TODO())
+
+	ctx := context.Background()
+	newCtx, cancel := signal.NotifyContext(ctx, os.Interrupt)
+	defer cancel()
+
+	err := app.Start(newCtx)
 	if err != nil {
-		fmt.Println("Failed to start app ")
+		fmt.Print("failed to start app %w", err)
 	}
 }
