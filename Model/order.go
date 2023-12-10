@@ -1,0 +1,24 @@
+package model
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type Order struct {
+	OrderID     uint64     `json:"order_id"`
+	CustomerID  uuid.UUID  `json:"customer_id"`
+	Items       []Item     `json:"items"`
+	CreatedAt   *time.Time `json:"created_at"`
+	ShippedAt   *time.Time `json:"shipped_at"`
+	CompletedAt *time.Time `json:"completed_at"`
+}
+
+// OrderStatus string // created, shipped, complete
+
+type Item struct {
+	ItemID   uuid.UUID `json:"item_id"`
+	Quantity uint      `json:"quantity"`
+	Price    uint      `json:"price"`
+}

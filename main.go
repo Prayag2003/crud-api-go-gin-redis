@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 
-	application "github.com/Prayag2003/go-microservice/Application"
+	application "github.com/Prayag2003/crud-api-golang/Application"
 )
 
 func main() {

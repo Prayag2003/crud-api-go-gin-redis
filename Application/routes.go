@@ -1,7 +1,7 @@
 package application
 
 import (
-	handler "github.com/Prayag2003/go-microservice/Handler"
+	handler "github.com/Prayag2003/crud-api-golang/Handler"
 	"github.com/gin-gonic/gin"
 )
 
