@@ -18,6 +18,8 @@ func orderIDKey(id uint64) string {
 	return fmt.Sprintf("Order: %d", id)
 }
 
+var ErrNotExist = errors.New("order does not exist")
+
 func (r *RedisRepo) Insert(ctx context.Context, order model.Order) error {
 
 	jsonToString, err := json.Marshal(order)
@@ -50,15 +52,14 @@ func (r *RedisRepo) Insert(ctx context.Context, order model.Order) error {
 	return nil
 }
 
-var errNotExist error
 
 func (r *RedisRepo) FindByID(ctx context.Context, id uint64) (model.Order, error) {
 	key := orderIDKey(id)
-	errNotExist = errors.New("order does not exist")
+	ErrNotExist = errors.New("order does not exist")
 	value, err := r.Client.Get(ctx, key).Result()
 
 	if errors.Is(err, redis.Nil) {
-		return model.Order{}, errNotExist
+		return model.Order{}, ErrNotExist
 	} else if err != nil {
 		return model.Order{}, fmt.Errorf("get Order : %w", err)
 	}
@@ -80,16 +81,16 @@ func (r *RedisRepo) DeleteByID(ctx context.Context, id uint64) error {
 	err := txn.Del(ctx, key).Err()
 	if errors.Is(err, redis.Nil) {
 		txn.Discard()
-		return errNotExist
+		return ErrNotExist
 	} else if err != nil {
 		txn.Discard()
-		return fmt.Errorf("get order: %w", err)
+		return fmt.Errorf("get order: %w", err) // Fix: Change err type to error
 	}
 
 	// NOTE: to remove the key
 	if err := txn.SRem(ctx, "orders", key); err != nil {
 		txn.Discard()
-		return fmt.Errorf("failed to exec: %w", err)
+		return fmt.Errorf("failed to exec: %w", err) // Fix: Change err type to error
 	}
 	return nil
 }
@@ -106,7 +107,7 @@ func (r *RedisRepo) Update(ctx context.Context, order model.Order) error {
 	err = r.Client.SetXX(ctx, key, string(data), 0).Err()
 
 	if errors.Is(err, redis.Nil) {
-		return errNotExist
+		return ErrNotExist
 	} else if err != nil {
 		return fmt.Errorf("set order: %w", err)
 	}
