@@ -52,7 +52,6 @@ func (r *RedisRepo) Insert(ctx context.Context, order model.Order) error {
 	return nil
 }
 
-
 func (r *RedisRepo) FindByID(ctx context.Context, id uint64) (model.Order, error) {
 	key := orderIDKey(id)
 	ErrNotExist = errors.New("order does not exist")
